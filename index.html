@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <style>
+      #cards-holder {
+        display: grid;
+        grid-template-columns: repeat(4, 150px);
+        column-gap: 16px;
+      }
+      .card {
+        height: 170px;
+        border: thick solid black;
+        border-radius: 16px;
+        display: grid;
+        align-items: center;
+        justify-items: center;
+      }
+
+      .activity-button {
+        font-size: 35px;
+        font-family: "Lucida Console", "Courier New", monospace;
+        background-color: #6c8ac2;
+        border-radius: 8px;
+        box-shadow: 0 0 5px 0 grey;
+        color: white;
+        cursor: pointer;
+        height: 100%;
+      }
+
+      .card-basic {
+        height: 400px;
+        max-width: 100%;
+        padding: 1rem;
+      }
+
+      .main {
+        display: grid;
+        grid-template-columns: auto;
+      }
+
+      body {
+        font-family: "Lucida Console", "Courier New", monospace;
+        font-weight: bold;
+        background-color: rgb(161, 238, 161)
+}
+
+    </style>
+  </head>
+
+  <body>
+
+    <p>Pick the card you believe will be randomly selected.</p>
+    <div id="cards-holder">
+
+    </div>
+
+    <h2>The selected card is <span id="selected-card"></span></h2>
+
+    <h1>And our random card is:</h1>
+    <div class="main">
+      <div class="image-area">
+          <img id="card-basic" class="card-basic" src='imgs/random-card.png' />
+      </div>
+    <h2 id="display"></h2>
+    <button class="activity-button" onclick="selectRandomCard()">Pick a random card</button>
+
+  </body>
+
+  <script>
+    var deck = []
+    var selectedCard = null
+
+    var cardsHolderEle = document.getElementById("cards-holder")
+    var selectedCardEle = document.getElementById("selected-card")
+    var displayEle = document.getElementById("display")
+
+    var twoOfSpades = {
+      value: 2,
+      suit: "spades",
+    }
+
+    var fourOfClubs = {
+      value: 4,
+      suit: "clubs",
+    }
+
+    var sevenOfDiamonds = {
+      value: 7,
+      suit: "diamonds",
+    }
+
+    var nineOfHearts = {
+      value: 9,
+      suit: "hearts",
+    }
+
+    var askUserForAnotherRound = () => {
+      var userWantsAnotherRound = confirm("Press OK for another round.")
+      if (userWantsAnotherRound) {
+        startRound()
+      }
+    }
+
+    var selectRandomCard = () => {
+      if (selectedCard === null) {
+        alert("Select card first!")
+      }
+      else {
+        var rand = Math.random()
+        var larger = rand * 3
+        var randomIndex = Math.round(larger)
+
+        var randomCard = deck[randomIndex]
+
+        var displayString = randomCard.value + " of " + randomCard.suit
+
+        document.getElementById("display").innerHTML = displayString
+
+        var imageSrc
+        if (randomCard.value === 2) {
+          imageSrc = 'imgs/2spades.png'
+        }
+         else if (randomCard.value === 4) {
+          imageSrc = 'imgs/4clubs.png'
+        } else if (randomCard.value === 7) {
+          imageSrc = 'imgs/7diamonds.png'
+        } else if (randomCard.value === 9) {
+          imageSrc = 'imgs/9hearts.png'
+        }
+
+        document.getElementById("card-basic").src = imageSrc
+
+        displayEle.innerHTML = displayString
+
+        var selectedCardIsCorrectValue = randomCard.value === selectedCard.value
+        var selectedCardIsCorrectSuit = randomCard.suit === selectedCard.suit
+
+        if (selectedCardIsCorrectValue && selectedCardIsCorrectSuit) {
+          alert("You guessed correctly!")
+        } else {
+          alert("Sorry. Wrong guess.")
+        }
+
+        setTimeout(askUserForAnotherRound, 3000)
+      }
+    }
+
+    var selectCard = (card) => {
+      selectedCard = card
+      selectedCardEle.innerHTML = card.value + " of " + card.suit
+    }
+
+    var displayCard = (card) => {
+
+      var cardEle = document.createElement("div")
+      cardEle.className = "card"
+      cardEle.innerHTML = card.value + " of " + card.suit
+      cardEle.onclick = () => {
+        selectCard(card)
+      }
+
+      cardsHolderEle.appendChild(cardEle)
+    }
+
+    var displayCards = () => {
+      cardsHolderEle.innerHTML = ""
+
+      displayCard(twoOfSpades)
+      displayCard(fourOfClubs)
+      displayCard(sevenOfDiamonds)
+      displayCard(nineOfHearts)
+    }
+
+    var buildDeck = () => {
+      deck = []
+      deck.push(twoOfSpades)
+      deck.push(fourOfClubs)
+      deck.push(sevenOfDiamonds)
+      deck.push(nineOfHearts)
+    }
+
+    var startRound = () => {
+      displayCards()
+
+      selectedCardEle.innerHTML = ""
+      displayEle.innerHTML = ""
+      selectedCard = null
+    }
+
+    buildDeck()
+    startRound()
+
+  </script>
+
+</html>
